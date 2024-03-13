@@ -1,0 +1,7 @@
+Final Versions:
+AComp_Passenger_data_no_error.csv: The passenger flights file to be used for your final prototype.
+Top30_airports_LatLong.csv: The airports file to be used by your final prototype.
+---
+Additional files:
+AComp_Passenger_data.csv: An erroneous version of the passenger flight data highlighting potential issues that may arrise.
+AComp_Passenger_data_no_error_DateTime.csv: Passenger data with timestamps converted for debugging only.
