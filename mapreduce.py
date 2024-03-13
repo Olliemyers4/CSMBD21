@@ -17,9 +17,9 @@ def shuffle(mapperOutput):
     return data
 
 def mapper(x):
-    cols = x.split('\t') # this is for tab separated files
-    if re.match('^\\d{1,9}$', cols[4]): # number that is 1-9 digits long
-        return (cols[2], int(cols[4]))
+    cols = x.split(',') # this is for comma separated files
+    if re.match('^[A-Z]{3}\\d{4}[A-Z]{2}\\d{1}$', cols[0]): # Passenger id Format: 𝑋𝑋𝑋𝑛𝑛𝑛𝑛𝑋𝑋𝑛
+        return (cols[0], int(1)) # return the passenger id and 1 (for counting)
     
 def reducer(keyValuesTuple):
     key,values = keyValuesTuple # unpack the tuple into key and values
@@ -29,7 +29,7 @@ mapInput = []
 
 if __name__ == '__main__':
 
-    with open('City-simple.tsv',encoding='utf-8') as f: # load the tsv -> will need to be switched to the required csv
+    with open('AComp_Passenger_data_no_error.csv','r',encoding='utf-8') as f: # load the tsv -> will need to be switched to the required csv
         mapInput = f.readlines()
     
     cpus = mp.cpu_count()
@@ -38,4 +38,4 @@ if __name__ == '__main__':
         mapOutput = pool.map(mapper, mapInput,chunksize=int(len(mapInput)/cpus)) # Map
         reduceInput = shuffle(mapOutput) # Shuffle
         reduceOutput = pool.map(reducer, reduceInput.items(),chunksize=int(len(reduceInput.keys())/cpus)) # Reduce
-        print(reduceOutput)
+    print(reduceOutput)
