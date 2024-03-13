@@ -1,35 +1,41 @@
 import re
 import multiprocessing as mp
 
-def shuffle(mapper_out):
+def shuffle(mapperOutput):
     data = {}
-    mapper_out = list(filter(None, mapper_out))
 
-    for k,v in mapper_out:
-        if k not in data:
-            data[k] = [v]
+    # remove None/Empty values from the list of items to process
+    mapperOutput = list(filter(None, mapperOutput)) 
+
+    for key,value in mapperOutput:
+        if key not in data:
+            # if the dict doesnt have the key in it, make a new key with the value
+            data[key] = [value]
         else:
-            data[k].append(v)
+            # if the key is already in the dict, append the value to the key - list of values
+            data[key].append(value)
     return data
 
-def up_map(x):
-    cols = x.split('\t')
-    if re.match('^\\d{1,9}$', cols[4]):
+def mapper(x):
+    cols = x.split('\t') # this is for tab separated files
+    if re.match('^\\d{1,9}$', cols[4]): # number that is 1-9 digits long
         return (cols[2], int(cols[4]))
     
-def up_reduce(z):
-    k,v = z
-    return (k, sum(v))
+def reducer(keyValuesTuple):
+    key,values = keyValuesTuple # unpack the tuple into key and values
+    return (key, sum(values))
 
-map_in = []
+mapInput = []
 
 if __name__ == '__main__':
 
-    with open('City-simple.tsv',encoding='utf-8') as f:
-        map_in = f.read().splitlines()
+    with open('City-simple.tsv',encoding='utf-8') as f: # load the tsv -> will need to be switched to the required csv
+        mapInput = f.readlines()
     
-    with mp.Pool(processes=mp.cpu_count()) as pool:
-        map_out = pool.map(up_map, map_in,chunksize=int(len(map_in)/mp.cpu_count()))
-        reduce_in = shuffle(map_out)
-        reduce_out = pool.map(up_reduce, reduce_in.items(),chunksize=int(len(reduce_in.keys())/mp.cpu_count()))
-        print(reduce_out)
+    cpus = mp.cpu_count()
+
+    with mp.Pool(processes=cpus) as pool:
+        mapOutput = pool.map(mapper, mapInput,chunksize=int(len(mapInput)/cpus)) # Map
+        reduceInput = shuffle(mapOutput) # Shuffle
+        reduceOutput = pool.map(reducer, reduceInput.items(),chunksize=int(len(reduceInput.keys())/cpus)) # Reduce
+        print(reduceOutput)
