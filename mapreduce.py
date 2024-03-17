@@ -38,4 +38,6 @@ if __name__ == '__main__':
         mapOutput = pool.map(mapper, mapInput,chunksize=int(len(mapInput)/cpus)) # Map
         reduceInput = shuffle(mapOutput) # Shuffle
         reduceOutput = pool.map(reducer, reduceInput.items(),chunksize=int(len(reduceInput.keys())/cpus)) # Reduce
-    print(reduceOutput)
+        with open('output.csv','w',encoding='utf-8') as f:
+            for item in reduceOutput:
+                f.write(str(item[0]) + ',' + str(item[1]) + '\n')
