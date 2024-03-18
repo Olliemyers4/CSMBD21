@@ -29,7 +29,7 @@ mapInput = []
 
 if __name__ == '__main__':
 
-    with open('AComp_Passenger_data_no_error.csv','r',encoding='utf-8') as f: # load the tsv -> will need to be switched to the required csv
+    with open('AComp_Passenger_data_no_error.csv','r',encoding='utf-8') as f: # load the csv
         mapInput = f.readlines()
     
     cpus = mp.cpu_count()
