@@ -39,5 +39,6 @@ if __name__ == '__main__':
         reduceInput = shuffle(mapOutput) # Shuffle
         reduceOutput = pool.map(reducer, reduceInput.items(),chunksize=int(len(reduceInput.keys())/cpus)) # Reduce
         with open('output.csv','w',encoding='utf-8') as f:
+            f.write('PassengerId,NumberOfFlights\n')
             for item in reduceOutput:
                 f.write(str(item[0]) + ',' + str(item[1]) + '\n')
